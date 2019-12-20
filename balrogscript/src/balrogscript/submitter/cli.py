@@ -373,6 +373,8 @@ class ReleaseScheduler(object):
             self.suffix = "-dummy"
 
     def run(self, productName, version, build_number, rule_ids, forceFallbackMappingUpdate=False, when=None, backgroundRate=None):
+        print("start")
+        print(backgroundRate)
         name = get_release_blob_name(productName, version, build_number, self.suffix)
 
         if when is not None:
@@ -402,8 +404,12 @@ class ReleaseScheduler(object):
             data["change_type"] = "update"
             # We receive an iso8601 datetime, but what Balrog needs is a to-the-millisecond epoch timestamp
             data["when"] = when.timestamp * 1000
+            print("background rate")
+            print(backgroundRate)
             if backgroundRate:
                 data["backgroundRate"] = backgroundRate
+            print("data")
+            print(data)
 
             ScheduledRuleChange(api_root=self.api_root, auth0_secrets=self.auth0_secrets, rule_id=rule_id).add_scheduled_rule_change(**data)
 
