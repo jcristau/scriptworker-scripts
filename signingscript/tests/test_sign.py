@@ -1024,6 +1024,7 @@ async def test_authenticode_sign_zip(tmpdir, mocker, context, fmt, use_comment):
     context.config["authenticode_timestamp_style"] = None
     context.config["authenticode_timestamp_url"] = None
     context.config["authenticode_add_digicert_cross"] = False
+    context.task = {"scopes": ["project:releng:signing:cert:dep-signing"]}
     comment = None
     if use_comment:
         comment = "Some authenticode comment"
@@ -1047,10 +1048,14 @@ async def test_authenticode_sign_zip(tmpdir, mocker, context, fmt, use_comment):
         if filename.endswith("signed.exe"):
             return True
 
+    async def mocked_verify(*args):
+        return True
+
     mocker.patch.object(sign, "retry_async", new=fake_retry_async)
     mocker.patch.object(winsign.sign, "sign_file", mocked_winsign)
     mocker.patch.object(winsign.osslsigncode, "is_signed", mocked_issigned)
     mocker.patch.object(sign, "sign_hash_with_autograph", mocked_autograph)
+    mocker.patch.object(sign, "verify_authenticode_signature", mocked_verify)
 
     result = await sign.sign_authenticode_zip(context, test_file, fmt, authenticode_comment=comment)
     assert result == test_file
@@ -1069,6 +1074,7 @@ async def test_authenticode_sign_msi(tmpdir, mocker, context, fmt, use_comment):
     context.config["authenticode_timestamp_style"] = None
     context.config["authenticode_timestamp_url"] = None
     context.config["authenticode_add_digicert_cross"] = False
+    context.task = {"scopes": ["project:releng:signing:cert:dep-signing"]}
     comment = None
     if use_comment:
         comment = "Some authenticode comment"
@@ -1093,10 +1099,14 @@ async def test_authenticode_sign_msi(tmpdir, mocker, context, fmt, use_comment):
         if filename.endswith("signed.exe"):
             return True
 
+    async def mocked_verify(*args):
+        return True
+
     mocker.patch.object(sign, "retry_async", new=fake_retry_async)
     mocker.patch.object(winsign.sign, "sign_file", mocked_winsign)
     mocker.patch.object(winsign.osslsigncode, "is_signed", mocked_issigned)
     mocker.patch.object(sign, "sign_hash_with_autograph", mocked_autograph)
+    mocker.patch.object(sign, "verify_authenticode_signature", mocked_verify)
 
     result = await sign.sign_authenticode_zip(context, test_file, fmt, authenticode_comment=comment)
     assert result == test_file
@@ -1227,6 +1237,7 @@ async def test_authenticode_sign_single_file(tmpdir, mocker, context):
     context.config["authenticode_timestamp_style"] = None
     context.config["authenticode_timestamp_url"] = None
     context.config["authenticode_add_digicert_cross"] = False
+    context.task = {"scopes": ["project:releng:signing:cert:dep-signing"]}
 
     await sign._extract_zipfile(context, os.path.join(TEST_DATA_DIR, "windows.zip"), tmp_dir=tmpdir)
     test_file = os.path.join(tmpdir, "helper.exe")
@@ -1239,8 +1250,12 @@ async def test_authenticode_sign_single_file(tmpdir, mocker, context):
         shutil.copyfile(infile, outfile)
         return True
 
+    async def mocked_verify(*args):
+        return True
+
     mocker.patch.object(winsign.sign, "sign_file", mocked_winsign)
     mocker.patch.object(sign, "sign_hash_with_autograph", mocked_autograph)
+    mocker.patch.object(sign, "verify_authenticode_signature", mocked_verify)
 
     result = await sign.sign_authenticode_zip(context, test_file, "autograph_authenticode")
     assert result == test_file
@@ -1258,6 +1273,7 @@ async def test_authenticode_sign_keyids(tmpdir, mocker, context):
     context.config["authenticode_timestamp_style"] = None
     context.config["authenticode_timestamp_url"] = None
     context.config["authenticode_add_digicert_cross"] = False
+    context.task = {"scopes": ["project:releng:signing:cert:dep-signing"]}
 
     await sign._extract_zipfile(context, os.path.join(TEST_DATA_DIR, "windows.zip"), tmp_dir=tmpdir)
     test_file = os.path.join(tmpdir, "helper.exe")
@@ -1271,12 +1287,28 @@ async def test_authenticode_sign_keyids(tmpdir, mocker, context):
         shutil.copyfile(infile, outfile)
         return True
 
+    async def mocked_verify(*args):
+        return True
+
     mocker.patch.object(winsign.sign, "sign_file", mocked_winsign)
     mocker.patch.object(sign, "sign_hash_with_autograph", mocked_autograph)
+    mocker.patch.object(sign, "verify_authenticode_signature", mocked_verify)
 
     result = await sign.sign_authenticode_zip(context, test_file, "autograph_authenticode:202005")
     assert result == test_file
     assert os.path.exists(result)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "file,expected",
+    (
+        ("stub-98.exe", True),
+        ("stub-100.exe", False),
+    ),
+)
+async def test_verify_authenticode_signature(file, expected):
+    assert await sign.verify_authenticode_signature("release-signing", os.path.join(TEST_DATA_DIR, file)) == expected
 
 
 @pytest.mark.asyncio

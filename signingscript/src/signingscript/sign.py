@@ -1428,7 +1428,36 @@ async def sign_authenticode_file(context, orig_path, fmt, *, authenticode_commen
         os.rename(outfile, infile)
     else:
         log.info("Digicert Cross hack is not enabled, skipping...")
+    cert_type = task.task_cert_type(context)
+    if not await verify_authenticode_signature(cert_type, infile):
+        raise SigningScriptError(f"Could not verify authenticode signature on {infile}")
+    return True
 
+
+async def verify_authenticode_signature(cert_type, filename):
+    """Verify a file's authenticode signature against known CA bundles."""
+    if is_msixfile(filename):
+        log.info("Skipping signature verification for MSIX file %s", filename)
+        return True
+    log.info("Verifying signature on %s", filename)
+    bundles = [
+        (
+            {"dep-signing": "authenticode_dep_ca.crt", "nightly-signing": "win7-codesigning.pem", "release-signing": "win7-codesigning.pem"},
+            "win7-timestamping.pem",
+        )
+    ]
+    cert_type = cert_type.split(":")[-1]
+    datadir = os.path.join(os.path.dirname(__file__), "data")
+    for codesigning, timestamping in bundles:
+        cmd = ["osslsigncode", "verify", "-CAfile", os.path.join(datadir, codesigning[cert_type]), "-untrusted", os.path.join(datadir, timestamping), filename]
+        p = await asyncio.create_subprocess_exec(*cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = await p.communicate()
+        # we can't rely on returncode alone because that does not account for the timestamp
+        if p.returncode != 0 or b"Signature verification: ok" not in stdout or b"Timestamp Server Signature verification: ok" not in stdout:
+            log.error("osslsigncode failed when running %s", cmd)
+            log.error("osslsigncode stdout: %s", stdout)
+            log.error("osslsigncode stderr: %s", stderr)
+            return False
     return True
 
 

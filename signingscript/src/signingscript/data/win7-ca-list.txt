@@ -1,0 +1,18 @@
+Issued To	Issued By	Expiration Date	Intended Purposes	Friendly Name	Status	Certificate Template
+AAA Certificate Services	AAA Certificate Services	1/1/2029	Server Authentication, Client Authentication, Secure Email, Code Signing, Time Stamping	C·O·M·O·D·O	    	
+Baltimore CyberTrust Root	Baltimore CyberTrust Root	5/13/2025	Server Authentication	Baltimore CyberTrust Root	    	
+Class 3 Public Primary Certification Authority	Class 3 Public Primary Certification Authority	8/2/2028	Secure Email, Client Authentication, Code Signing, Server Authentication	VeriSign Class 3 Public Primary CA	    	
+Class 3 Public Primary Certification Authority	Class 3 Public Primary Certification Authority	1/8/2004	Secure Email, Client Authentication, Code Signing, Server Authentication	VeriSign	    	
+Copyright (c) 1997 Microsoft Corp.	Copyright (c) 1997 Microsoft Corp.	12/31/1999	Time Stamping	Microsoft Timestamp Root	    	
+DigiCert Assured ID Root CA	DigiCert Assured ID Root CA	11/10/2031	Server Authentication, Client Authentication, Secure Email, Code Signing, Time Stamping	DigiCert	    	
+DigiCert Global Root CA	DigiCert Global Root CA	11/10/2031	Server Authentication, Client Authentication, Secure Email, Code Signing, Time Stamping	DigiCert	    	
+DST Root CA X3	DST Root CA X3	9/30/2021	Secure Email, Server Authentication	DST Root CA X3	    	
+GlobalSign Root CA	GlobalSign Root CA	1/28/2028	Server Authentication, Client Authentication, Code Signing, Secure Email, Time Stamping, OCSP Signing, Encrypting File System, IP security tunnel termination, IP security user, IP security IKE intermediate	GlobalSign	    	
+GTE CyberTrust Global Root	GTE CyberTrust Global Root	8/14/2018	Secure Email, Client Authentication, Server Authentication, Code Signing	GTE CyberTrust Global Root	    	
+http://www.valicert.com/	http://www.valicert.com/	6/26/2019	Secure Email, Server Authentication	Starfield Technologies	    	
+Microsoft Authenticode(tm) Root Authority	Microsoft Authenticode(tm) Root Authority	1/1/2000	Secure Email, Code Signing	Microsoft Authenticode(tm) Root	    	
+Microsoft Root Authority	Microsoft Root Authority	12/31/2020	<All>	Microsoft Root Authority	    	
+Microsoft Root Certificate Authority	Microsoft Root Certificate Authority	5/10/2021	<All>	Microsoft Root Certificate Authority	    	
+NO LIABILITY ACCEPTED, (c)97 VeriSign, Inc.	NO LIABILITY ACCEPTED, (c)97 VeriSign, Inc.	1/8/2004	Time Stamping	VeriSign Time Stamping CA	    	
+Starfield Class 2 Certification Authority	Starfield Class 2 Certification Authority	6/29/2034	Server Authentication, Client Authentication, Secure Email, Code Signing	Starfield Class 2 Certification Authority	    	
+Thawte Timestamping CA	Thawte Timestamping CA	1/1/2021	Time Stamping	Thawte Timestamping CA	    	
